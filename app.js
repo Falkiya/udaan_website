@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     heroSubtitle: 'Where Learning Takes Flight',
     address: '[Insert Academy Campus Address Here]',
     phone: '+91 XXXXX XXXXX',
-    email: 'admissions@yourdomain.com',
+    email: 'admissions@udaanacademymys.com',
     heroBgImage: ''
   };
 
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('heroSubtitleText').textContent = info.heroSubtitle;
     document.getElementById('contactAddressText').textContent = info.address;
     document.getElementById('contactPhoneText').innerHTML = info.phone;
-    document.getElementById('contactEmailText').innerHTML = `${info.email}<br>info@yourdomain.com`;
+    document.getElementById('contactEmailText').innerHTML = `${info.email}<br>info@udaanacademymys.com`;
 
     // Bind Hero Background Image if uploaded
     if (info.heroBgImage) {
@@ -1497,7 +1497,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Trigger mail client
     const currentInfo = JSON.parse(localStorage.getItem('udaan_general_info') || '{}');
-    const academyEmail = currentInfo.email || 'admissions@yourdomain.com';
+    const academyEmail = currentInfo.email || 'admissions@udaanacademymys.com';
     const subject = encodeURIComponent(`[Udaan Enrollment] Request from ${studentName}`);
     const body = encodeURIComponent(
       `Udaan Academy Enrollment Request Details:\n\n` +
@@ -1550,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Trigger mail client
       const currentInfo = JSON.parse(localStorage.getItem('udaan_general_info') || '{}');
-      const academyEmail = currentInfo.email || 'admissions@yourdomain.com';
+      const academyEmail = currentInfo.email || 'admissions@udaanacademymys.com';
       const subject = encodeURIComponent(`[Udaan Contact] Query from ${clientName}`);
       const body = encodeURIComponent(
         `Udaan Academy Contact Inquiry Details:\n\n` +
