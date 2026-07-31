@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Udaan Academy - Empowering Minds, Inspiring Futures</title>
+  <meta name="description" content="Udaan Academy provides quality education, expert faculties, personalized mentorship, and proven results. Skills shape success. Explore our courses and enroll now.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Header Frame Container (Rounded, Outline Box) -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="#home" class="logo-link">
+        <img src="assets/logo.jpg" alt="Udaan Academy Logo" class="logo-img">
+      </a>
+
+      <!-- Desktop Navigation Menu Links -->
+      <nav class="nav-menu">
+        <a href="#home" class="nav-link active">HOME</a>
+        <a href="#about" class="nav-link">ABOUT US</a>
+        <a href="#teachers" class="nav-link">TEACHERS</a>
+        <a href="#gallery" class="nav-link">GALLERY</a>
+        <a href="#achievements" class="nav-link">ACHIEVEMENTS</a>
+        <a href="#blog" class="nav-link">BLOG</a>
+        <a href="#contact" class="nav-link">CONTACT US</a>
+      </nav>
+
+      <!-- Enroll Button -->
+      <div class="header-actions">
+        <button class="btn btn-enroll" id="navEnrollBtn">
+          ENROLL NOW 
+          <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Toggle Button -->
+      <button class="mobile-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu Overlay -->
+  <div class="mobile-menu-overlay">
+    <div class="mobile-menu-drawer">
+      <div class="drawer-header">
+        <span class="drawer-title">UDAAN ACADEMY</span>
+        <button class="drawer-close" aria-label="Close menu">&times;</button>
+      </div>
+      <nav class="drawer-nav">
+        <a href="#home" class="drawer-link active">HOME</a>
+        <a href="#about" class="drawer-link">ABOUT US</a>
+        <a href="#teachers" class="drawer-link">TEACHERS</a>
+        <a href="#gallery" class="drawer-link">GALLERY</a>
+        <a href="#achievements" class="drawer-link">ACHIEVEMENTS</a>
+        <a href="#blog" class="drawer-link">BLOG</a>
+        <a href="#contact" class="drawer-link">CONTACT US</a>
+      </nav>
+      <div class="drawer-footer">
+        <button class="btn btn-enroll w-full" id="drawerEnrollBtn">ENROLL NOW</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-section">
+    <div class="hero-container">
+      <!-- Hero Left: Text & Features -->
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span id="heroText1">EMPOWERING MINDS</span> <br>
+          <span class="accent-text" id="heroText2">INSPIRING FUTURES</span>
+        </h1>
+        <div class="title-separator">
+          <div class="sep-line"></div>
+          <div class="sep-diamond"></div>
+          <div class="sep-line"></div>
+        </div>
+        <p class="hero-subtitle" id="heroSubtitleText">Where Learning Takes Flight</p>
+
+        <!-- Feature Badges 2x2 Grid -->
+        <div class="features-grid">
+          <!-- Quality Education -->
+          <div class="feature-badge">
+            <div class="badge-icon icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            </div>
+            <div class="badge-text">
+              <span class="badge-title">QUALITY</span>
+              <span class="badge-sub">EDUCATION</span>
+            </div>
+          </div>
+
+          <!-- Expert Faculties -->
+          <div class="feature-badge">
+            <div class="badge-icon icon-orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+            </div>
+            <div class="badge-text">
+              <span class="badge-title">EXPERT</span>
+              <span class="badge-sub">FACULTIES</span>
+            </div>
+          </div>
+
+          <!-- Personalized Mentorship -->
+          <div class="feature-badge">
+            <div class="badge-icon icon-blue-dark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="badge-text">
+              <span class="badge-title">PERSONALIZED</span>
+              <span class="badge-sub">MENTORSHIP</span>
+            </div>
+          </div>
+
+          <!-- Proven Results -->
+          <div class="feature-badge">
+            <div class="badge-icon icon-gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+            <div class="badge-text">
+              <span class="badge-title">PROVEN</span>
+              <span class="badge-sub">RESULTS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Buttons -->
+        <div class="hero-actions-group">
+          <a href="#about" class="btn btn-primary">ABOUT US</a>
+          <a href="#teachers" class="btn btn-outline">MEET TEACHERS</a>
+        </div>
+      </div>
+
+    </div>
+    
+    <!-- Paper Airplane Floating Graphic Overlay (Simulates reference image arrow path) -->
+    <div class="paper-airplane-container">
+      <svg class="airplane-svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="rgba(240, 124, 0, 0.4)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13"></path>
+        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section id="about" class="section-container">
+    <div class="grid-container max-w-container">
+      <div class="col-6">
+        <span class="section-tag">WHO WE ARE</span>
+        <h2 class="section-title">Nurturing Excellence, Shaping Tomorrow</h2>
+        <p class="section-desc">
+          At Udaan Academy, we believe education is the spark that ignites a lifelong journey of discovery and growth. Founded on the pillars of academic rigor and holistic development, we prepare students to conquer both board exams and national competitive tests.
+        </p>
+        <p class="section-desc">
+          Our specialized methodology goes beyond regular lectures. We provide custom-designed study materials, weekly tests, detailed analytics, and active support programs to make sure no student is left behind.
+        </p>
+        <div class="about-strengths">
+          <div class="strength-item">
+            <span class="strength-number">Primary</span>
+            <span class="strength-label">Classes 1st - 5th</span>
+          </div>
+          <div class="strength-item">
+            <span class="strength-number">Middle</span>
+            <span class="strength-label">Classes 6th - 8th</span>
+          </div>
+          <div class="strength-item">
+            <span class="strength-number">High</span>
+            <span class="strength-label">Classes 9th - 12th</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 flex-center relative">
+        <!-- Interactive Card Stack displaying Academy Values -->
+        <div class="interactive-card-stack">
+          <div class="stacked-card card-blue">
+            <h3 class="card-title">Our Vision</h3>
+            <p>To empower youth through relevant knowledge, values, and specialized skills to help them soar to their highest potential.</p>
+          </div>
+          <div class="stacked-card card-orange">
+            <h3 class="card-title">Our Mission</h3>
+            <p>To provide result-oriented, premium education utilizing cutting-edge pedagogical tools and caring mentoring support systems.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Teachers Section -->
+  <section id="teachers" class="section-container bg-light">
+    <div class="max-w-container">
+      <div class="text-center mb-md">
+        <span class="section-tag">OUR FACULTY</span>
+        <h2 class="section-title">Meet Our Dedicated Educators</h2>
+        <p class="section-subtitle">Experienced teachers committed to nurturing academic success and logical growth in school students.</p>
+      </div>
+
+      <!-- Teachers Cards Grid -->
+      <div class="teachers-grid" id="teachersGrid">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Facilities Section Removed -->
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="section-container bg-light">
+    <div class="max-w-container">
+      <div class="text-center mb-md">
+        <span class="section-tag">CAMPUS MOMENTS</span>
+        <h2 class="section-title">Life at Udaan Academy</h2>
+        <p class="section-subtitle">Take a sneak peek into our academic community, science exhibitions, and graduation events.</p>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section id="achievements" class="section-container">
+    <div class="max-w-container">
+      <div class="text-center mb-md">
+        <span class="section-tag">SUCCESS TALES</span>
+        <h2 class="section-title">Celebrating Our Top Achievers</h2>
+        <p class="section-subtitle">Year after year, our students reach new heights in state board scores and competitive ranks.</p>
+      </div>
+
+      <div class="achievements-slider" id="toppersGrid">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section id="blog" class="section-container bg-light">
+    <div class="max-w-container">
+      <div class="text-center mb-md">
+        <span class="section-tag">EDUCATION IN SIGHTS</span>
+        <h2 class="section-title">From Our Academic Desk</h2>
+        <p class="section-subtitle">Stay updated with study strategies, preparation hacks, and student guidance articles.</p>
+      </div>
+
+      <div class="blog-grid" id="blogGrid">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section id="contact" class="section-container">
+    <div class="max-w-container">
+      <div class="text-center mb-md">
+        <span class="section-tag">GET IN TOUCH</span>
+        <h2 class="section-title">We'd Love to Hear From You</h2>
+        <p class="section-subtitle">Reach out for admissions, scholarship tests, or queries. Our counselor will respond within 24 hours.</p>
+      </div>
+
+      <div class="grid-container">
+        <!-- Contact Details -->
+        <div class="col-5">
+          <div class="contact-card">
+            <h3 class="contact-card-title">Admission & Info Desk</h3>
+            
+            <div class="contact-detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+              <div class="detail-content">
+                <strong>Campus Address</strong>
+                <p id="contactAddressText">[Insert Academy Campus Address Here]</p>
+              </div>
+            </div>
+
+            <div class="contact-detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-phone-volume"></i></div>
+              <div class="detail-content">
+                <strong>Contact Number</strong>
+                <p id="contactPhoneText">+91 XXXXX XXXXX</p>
+              </div>
+            </div>
+
+            <div class="contact-detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+              <div class="detail-content">
+                <strong>Email Channels</strong>
+                <p id="contactEmailText">admissions@yourdomain.com<br>info@yourdomain.com</p>
+              </div>
+            </div>
+            
+            <!-- Social Links -->
+            <div class="contact-socials">
+              <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+              <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-7">
+          <form class="contact-form" id="contactForm">
+            <h3 class="form-title">Send a Quick Message</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contactName">Full Name <span class="required">*</span></label>
+                <input type="text" id="contactName" name="name" required placeholder="John Doe">
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email Address <span class="required">*</span></label>
+                <input type="email" id="contactEmail" name="email" required placeholder="john@example.com">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contactPhone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="contactPhone" name="phone" required placeholder="+91 98765-XXXXX">
+              </div>
+              <div class="form-group">
+                <label for="contactSubject">Subject Interest</label>
+                <select id="contactSubject" name="subject">
+                  <option value="admissions">Admission Query</option>
+                  <option value="scholarship">Scholarship Admission Test (SAT)</option>
+                  <option value="counseling">Free Counseling Session</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contactMessage">Message / Questions <span class="required">*</span></label>
+              <textarea id="contactMessage" name="message" rows="5" required placeholder="Tell us about the student's background and required course..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full">SUBMIT MESSAGE</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="max-w-container footer-content-grid">
+      <div class="footer-col brand-col">
+        <h4 class="footer-title">UDAAN ACADEMY</h4>
+        <p class="footer-about">
+          Empowering school minds and guiding students to academic excellence. Skills shape success.
+        </p>
+        <p class="footer-copyright">&copy; 2026 Udaan Academy. All rights reserved.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#teachers">Teachers</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">School Programs</h4>
+        <ul class="footer-links">
+          <li><a href="#about">Primary Foundation (1st - 5th)</a></li>
+          <li><a href="#about">Middle School Logic (6th - 8th)</a></li>
+          <li><a href="#about">High School Preparation (9th - 10th)</a></li>
+          <li><a href="#about">Senior Secondary Board (11th - 12th)</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Newsletter</h4>
+        <p class="footer-about">Subscribe to receive study material links and notifications for talent examinations.</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" placeholder="Your email address" required aria-label="Email for newsletter">
+          <button type="submit" aria-label="Subscribe"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Enrollment Modal -->
+  <div class="modal-overlay" id="enrollModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Student Enrollment Request</h3>
+        <button class="modal-close" id="modalCloseBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="enrollForm">
+          <div class="form-group">
+            <label for="enrollName">Student's Full Name <span class="required">*</span></label>
+            <input type="text" id="enrollName" required placeholder="e.g. Rahul Kumar">
+          </div>
+          
+          <div class="form-group">
+            <label for="enrollEmail">Email Address <span class="required">*</span></label>
+            <input type="email" id="enrollEmail" required placeholder="parent@example.com / student@example.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="enrollPhone">Contact Phone Number <span class="required">*</span></label>
+            <input type="tel" id="enrollPhone" required placeholder="+91 98765-XXXXX">
+          </div>
+
+          <div class="form-group">
+            <label for="enrollCourse">Select Target Program <span class="required">*</span></label>
+            <select id="enrollCourse" required>
+              <option value="" disabled selected>-- Select Target Program --</option>
+              <option value="Primary School Foundation">Primary School Foundation (Classes 1st - 5th)</option>
+              <option value="Middle School Concept Mastery">Middle School Concept Mastery (Classes 6th - 8th)</option>
+              <option value="High School & Board Success">High School & Board Success (Classes 9th - 12th)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="enrollMessage">Additional Info / Board Marks</label>
+            <textarea id="enrollMessage" rows="3" placeholder="Tell us about student's current grades or specific requirements..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full mt-sm">SUBMIT REGISTRATION</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Academy Administration Portal</h3>
+        <button class="modal-close" id="adminModalCloseBtn">&times;</button>
+      </div>
+      <div class="admin-tabs" id="adminTabsHeader" style="display: none;">
+        <button class="admin-tab-btn active" data-tab="tab-general">General Info</button>
+        <button class="admin-tab-btn" data-tab="tab-teachers">Manage Teachers</button>
+        <button class="admin-tab-btn" data-tab="tab-toppers">Manage Toppers</button>
+        <button class="admin-tab-btn" data-tab="tab-gallery">Manage Gallery</button>
+        <button class="admin-tab-btn" data-tab="tab-blog">Manage Desk</button>
+        <button class="admin-tab-btn" data-tab="tab-queries">View Queries</button>
+        <button class="admin-tab-btn" data-tab="tab-security">Security Settings</button>
+      </div>
+      <div class="modal-body admin-modal-body">
+        
+        <!-- Admin Login Form (Visible first) -->
+        <div id="adminLoginSection" class="admin-login-section">
+          <h4 class="admin-section-title">Administrator Authentication</h4>
+          <form id="adminLoginForm">
+            <div class="form-group">
+              <label for="adminAuthPassword">Enter Password <span class="required">*</span></label>
+              <input type="password" id="adminAuthPassword" required placeholder="Default password is admin123">
+            </div>
+            <button type="submit" class="btn btn-primary w-full">ACCESS ADMIN AREA</button>
+          </form>
+        </div>
+
+        <!-- General Info Tab -->
+        <div class="admin-tab-content" id="tab-general">
+          <form id="adminGeneralForm">
+            <h4 class="admin-section-title">Edit Website Text</h4>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="adminHeroTitle1">Hero Title Line 1</label>
+                <input type="text" id="adminHeroTitle1" required>
+              </div>
+              <div class="form-group">
+                <label for="adminHeroTitle2">Hero Title Line 2</label>
+                <input type="text" id="adminHeroTitle2" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="adminHeroSubtitle">Hero Subtitle</label>
+              <input type="text" id="adminHeroSubtitle" required>
+            </div>
+            
+            <h4 class="admin-section-title">Edit Contact Settings</h4>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="adminContactAddress">Campus Address</label>
+                <input type="text" id="adminContactAddress" required>
+              </div>
+              <div class="form-group">
+                <label for="adminContactEmail">Email Address</label>
+                <input type="email" id="adminContactEmail" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="adminContactPhone">Contact Number</label>
+              <input type="text" id="adminContactPhone" required>
+            </div>
+            
+            <h4 class="admin-section-title">Edit Visual Settings</h4>
+            <div class="form-group">
+              <label for="adminHeroBgFile">Hero Background Image Upload (Leave empty to keep current)</label>
+              <input type="file" id="adminHeroBgFile" accept="image/*">
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full">SAVE GENERAL DETAILS</button>
+          </form>
+        </div>
+        
+        <!-- Manage Teachers Tab -->
+        <div class="admin-tab-content" id="tab-teachers">
+          <h4 class="admin-section-title">Add New Teacher</h4>
+          <form id="adminAddTeacherForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="teacherName">Teacher Name <span class="required">*</span></label>
+                <input type="text" id="teacherName" required placeholder="e.g. Dr. Amit Verma">
+              </div>
+              <div class="form-group">
+                <label for="teacherQualification">Academic Qualification <span class="required">*</span></label>
+                <input type="text" id="teacherQualification" required placeholder="e.g. PhD in Math, M.Sc Physics">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="teacherImageFile">Profile Photo Upload (Leave empty for default avatar)</label>
+                <input type="file" id="teacherImageFile" accept="image/*">
+              </div>
+              <div class="form-group">
+                <label for="teacherBannerFile">Cover Banner Upload (Leave empty for default banner)</label>
+                <input type="file" id="teacherBannerFile" accept="image/*">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="teacherDesc">Short Bio / Philosophy <span class="required">*</span></label>
+              <input type="text" id="teacherDesc" required placeholder="e.g. Dedicated to building logical foundations in young minds.">
+            </div>
+
+            <div class="form-group mt-sm">
+              <label>Subjects Handled <span class="required">*</span></label>
+              <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="Maths"> Maths</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="Science"> Science</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="Social Science"> Social Science</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="English"> English</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="Kannada"> Kannada</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="Hindi"> Hindi</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherSubjects" value="Computer Science"> Computer Science</label>
+              </div>
+            </div>
+
+            <div class="form-group mt-sm">
+              <label>Classes Taken <span class="required">*</span></label>
+              <div class="checkbox-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 1"> Class 1</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 2"> Class 2</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 3"> Class 3</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 4"> Class 4</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 5"> Class 5</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 6"> Class 6</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 7"> Class 7</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 8"> Class 8</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 9"> Class 9</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 10"> Class 10</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 11"> Class 11</label>
+                <label class="checkbox-item"><input type="checkbox" name="teacherClasses" value="Class 12"> Class 12</label>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px;" class="mt-sm">
+              <button type="submit" class="btn btn-primary w-full" id="teacherFormSubmitBtn">ADD TEACHER</button>
+              <button type="button" class="btn btn-outline" id="cancelTeacherEditBtn" style="display: none; padding: 12px;">Cancel</button>
+            </div>
+          </form>
+          
+          <h4 class="admin-section-title mt-sm">Current Teachers List</h4>
+          <div class="admin-teachers-list" id="adminTeachersList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Manage Toppers Tab -->
+        <div class="admin-tab-content" id="tab-toppers">
+          <h4 class="admin-section-title">Add New Topper</h4>
+          <form id="adminAddTopperForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="topperName">Student Name <span class="required">*</span></label>
+                <input type="text" id="topperName" required placeholder="e.g. Aditya Rao">
+              </div>
+              <div class="form-group">
+                <label for="topperScore">Score / Rank / Achievement <span class="required">*</span></label>
+                <input type="text" id="topperScore" required placeholder="e.g. 98.6% - Class 10th Board">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="topperImageFile">Photo Upload (Leave empty for default avatar)</label>
+                <input type="file" id="topperImageFile" accept="image/*">
+              </div>
+              <div class="form-group">
+                <label for="topperQuote">Quote / Testimonial <span class="required">*</span></label>
+                <input type="text" id="topperQuote" required placeholder="e.g. The doubt clearing sessions were incredibly masterclass.">
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px;" class="mt-sm">
+              <button type="submit" class="btn btn-primary w-full" id="topperFormSubmitBtn">ADD TOPPER</button>
+              <button type="button" class="btn btn-outline" id="cancelTopperEditBtn" style="display: none; padding: 12px;">Cancel</button>
+            </div>
+          </form>
+          
+          <h4 class="admin-section-title mt-sm">Current Toppers List</h4>
+          <div class="admin-teachers-list" id="adminToppersList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Manage Gallery Tab -->
+        <div class="admin-tab-content" id="tab-gallery">
+          <h4 class="admin-section-title">Add Gallery Photo</h4>
+          <form id="adminAddGalleryForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="galleryTitle">Photo Label / Caption <span class="required">*</span></label>
+                <input type="text" id="galleryTitle" required placeholder="e.g. Active Classroom Activities">
+              </div>
+              <div class="form-group">
+                <label for="galleryLayout">Grid Display Layout <span class="required">*</span></label>
+                <select id="galleryLayout" required>
+                  <option value="normal">Standard size (1x1)</option>
+                  <option value="w-2">Double Width (2x1 wide)</option>
+                  <option value="h-2">Double Height (1x2 tall)</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="galleryImageFile">Photo File Upload <span class="required">*</span></label>
+              <input type="file" id="galleryImageFile" accept="image/*">
+            </div>
+            
+            <div style="display: flex; gap: 12px;" class="mt-sm">
+              <button type="submit" class="btn btn-primary w-full" id="galleryFormSubmitBtn">ADD TO GALLERY</button>
+              <button type="button" class="btn btn-outline" id="cancelGalleryEditBtn" style="display: none; padding: 12px;">Cancel</button>
+            </div>
+          </form>
+          
+          <h4 class="admin-section-title mt-sm">Current Gallery Images</h4>
+          <div class="admin-teachers-list" id="adminGalleryList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Manage Desk Tab -->
+        <div class="admin-tab-content" id="tab-blog">
+          <h4 class="admin-section-title">Add Desk Article</h4>
+          <form id="adminAddBlogForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="blogTitle">Article Title <span class="required">*</span></label>
+                <input type="text" id="blogTitle" required placeholder="e.g. How to Build a Regular Study Routine">
+              </div>
+              <div class="form-group">
+                <label for="blogTag">Category / Tag <span class="required">*</span></label>
+                <input type="text" id="blogTag" required placeholder="e.g. Study Tips, Science">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="blogImageFile">Cover Photo Upload (Leave empty for default photo)</label>
+              <input type="file" id="blogImageFile" accept="image/*">
+            </div>
+
+            <div class="form-group">
+              <label for="blogExcerpt">Short Summary Excerpt <span class="required">*</span></label>
+              <textarea id="blogExcerpt" rows="3" required placeholder="A brief 1-2 sentence description of the article..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px;" class="mt-sm">
+              <button type="submit" class="btn btn-primary w-full" id="blogFormSubmitBtn">ADD TO DESK</button>
+              <button type="button" class="btn btn-outline" id="cancelBlogEditBtn" style="display: none; padding: 12px;">Cancel</button>
+            </div>
+          </form>
+          
+          <h4 class="admin-section-title mt-sm">Current Desk Articles</h4>
+          <div class="admin-teachers-list" id="adminBlogList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- View Queries Tab -->
+        <div class="admin-tab-content" id="tab-queries">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px;">
+            <h4 class="admin-section-title" style="margin: 0; border: none; padding: 0;">User Queries & Registrations</h4>
+            <button type="button" class="btn btn-outline" id="clearQueriesBtn" style="padding: 6px 12px; font-size: 12px;">Clear All</button>
+          </div>
+          <div class="admin-queries-list" id="adminQueriesList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Security Settings Tab -->
+        <div class="admin-tab-content" id="tab-security">
+          <h4 class="admin-section-title">Change Admin Password</h4>
+          <form id="adminPasswordForm">
+            <div class="form-group">
+              <label for="currentPassword">Current Password <span class="required">*</span></label>
+              <input type="password" id="currentPassword" required placeholder="Enter current password">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newPassword">New Password <span class="required">*</span></label>
+                <input type="password" id="newPassword" required placeholder="Enter new password">
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password <span class="required">*</span></label>
+                <input type="password" id="confirmPassword" required placeholder="Confirm new password">
+              </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full">UPDATE PASSWORD</button>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Alert Notification container (Toast) -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
