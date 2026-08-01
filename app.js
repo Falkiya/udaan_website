@@ -120,6 +120,63 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
+  /* ==========================================
+     Database Integration Helpers (Vercel KV)
+     ========================================== */
+  async function dbSave(key, data) {
+    const password = localStorage.getItem('udaan_admin_password') || 'admin123';
+    try {
+      const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ key, data })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save to database');
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      showToast('Database error: changes could not be saved globally.', 'error');
+      return false;
+    }
+  }
+
+  async function dbLoad(key) {
+    const password = localStorage.getItem('udaan_admin_password') || 'admin123';
+    try {
+      const response = await fetch(`/api/load?key=${key}`, {
+        headers: {
+          'x-admin-password': password
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to load from database');
+      }
+      const res = await response.json();
+      return res.data;
+    } catch (e) {
+      console.warn(`Failed to load ${key} from database.`, e);
+      return null;
+    }
+  }
+
+  // Intercept localStorage.setItem to automatically sync changes to Vercel KV
+  const originalSetItem = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function(key, value) {
+    originalSetItem(key, value);
+    const keysToSync = ['udaan_general_info', 'udaan_teachers', 'udaan_toppers', 'udaan_gallery', 'udaan_blog_posts', 'udaan_admin_password', 'udaan_queries'];
+    if (keysToSync.includes(key)) {
+      if (key === 'udaan_queries' && !localStorage.getItem('udaan_admin_password')) {
+        return;
+      }
+      dbSave(key, JSON.parse(value));
+    }
+  };
+
 
   /* ==========================================
      5. Admin Panel (Easter Egg - 5 Clicks)
@@ -188,41 +245,54 @@ document.addEventListener('DOMContentLoaded', () => {
     adminLoginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const enteredPassword = document.getElementById('adminAuthPassword').value;
-      const storedPassword = localStorage.getItem('udaan_admin_password') || 'admin123';
 
-      if (enteredPassword === storedPassword) {
-        // Unlock Admin panel
-        document.getElementById('adminLoginSection').style.display = 'none';
-        
-        // Show tabs header
-        const tabsHeader = document.getElementById('adminTabsHeader');
-        tabsHeader.style.display = 'flex';
-        
-        // Reset tab buttons active state
-        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector('.admin-tab-btn[data-tab="tab-general"]').classList.add('active');
-        
-        // Show General Tab Content
-        document.getElementById('tab-general').classList.add('active');
+      showToast('Authenticating...', 'info');
 
-        // Populate form fields with current values from DOM
-        document.getElementById('adminHeroTitle1').value = document.getElementById('heroText1').textContent;
-        document.getElementById('adminHeroTitle2').value = document.getElementById('heroText2').textContent;
-        document.getElementById('adminHeroSubtitle').value = document.getElementById('heroSubtitleText').textContent;
-        
-        document.getElementById('adminContactAddress').value = document.getElementById('contactAddressText').textContent;
-        
-        document.getElementById('adminContactPhone').value = document.getElementById('contactPhoneText').textContent.trim();
-        
-        const emailText = document.getElementById('contactEmailText').innerHTML;
-        const emailParts = emailText.split('<br>');
-        document.getElementById('adminContactEmail').value = emailParts[0] ? emailParts[0].trim() : '';
+      fetch('/api/load?key=udaan_admin_password', {
+        headers: { 'x-admin-password': enteredPassword }
+      })
+      .then(response => {
+        if (response.ok) {
+          localStorage.setItem('udaan_admin_password', enteredPassword);
+          
+          // Unlock Admin panel
+          document.getElementById('adminLoginSection').style.display = 'none';
+          
+          // Show tabs header
+          const tabsHeader = document.getElementById('adminTabsHeader');
+          tabsHeader.style.display = 'flex';
+          
+          // Reset tab buttons active state
+          document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector('.admin-tab-btn[data-tab="tab-general"]').classList.add('active');
+          
+          // Show General Tab Content
+          document.getElementById('tab-general').classList.add('active');
 
-        showToast('Login successful! Welcome to the Admin Panel.', 'success');
-      } else {
-        showToast('Incorrect password! Please try again.', 'error');
-        document.getElementById('adminAuthPassword').value = '';
-      }
+          // Populate form fields with current values from DOM
+          document.getElementById('adminHeroTitle1').value = document.getElementById('heroText1').textContent;
+          document.getElementById('adminHeroTitle2').value = document.getElementById('heroText2').textContent;
+          document.getElementById('adminHeroSubtitle').value = document.getElementById('heroSubtitleText').textContent;
+          
+          document.getElementById('adminContactAddress').value = document.getElementById('contactAddressText').textContent;
+          document.getElementById('adminContactPhone').value = document.getElementById('contactPhoneText').textContent.trim();
+          
+          const emailText = document.getElementById('contactEmailText').innerHTML;
+          const emailParts = emailText.split('<br>');
+          document.getElementById('adminContactEmail').value = emailParts[0] ? emailParts[0].trim() : '';
+
+          showToast('Login successful! Welcome to the Admin Panel.', 'success');
+        } else if (response.status === 401) {
+          showToast('Incorrect password! Please try again.', 'error');
+          document.getElementById('adminAuthPassword').value = '';
+        } else {
+          showToast('Database error: Unable to authenticate.', 'error');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Database connection failed.', 'error');
+      });
     });
   }
 
@@ -251,9 +321,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      localStorage.setItem('udaan_admin_password', newPwd);
-      showToast('Password updated successfully!', 'success');
-      adminPasswordForm.reset();
+      showToast('Updating password in database...', 'info');
+
+      fetch('/api/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': storedPassword
+        },
+        body: JSON.stringify({ key: 'udaan_admin_password', data: newPwd })
+      })
+      .then(response => {
+        if (response.ok) {
+          localStorage.setItem('udaan_admin_password', newPwd);
+          showToast('Password updated successfully!', 'success');
+          adminPasswordForm.reset();
+        } else {
+          showToast('Failed to save new password to database.', 'error');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Failed to connect to database.', 'error');
+      });
     });
   }
 
@@ -404,16 +494,26 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   // Load General Text Settings
-  function loadGeneralInfo() {
+  async function loadGeneralInfo() {
     let info = localStorage.getItem('udaan_general_info');
-    if (!info) {
-      info = defaultGeneralInfo;
-      localStorage.setItem('udaan_general_info', JSON.stringify(info));
+    if (info) {
+      bindGeneralInfo(JSON.parse(info));
     } else {
-      info = JSON.parse(info);
+      bindGeneralInfo(defaultGeneralInfo);
     }
 
-    // Bind values directly to DOM elements
+    try {
+      const data = await dbLoad('udaan_general_info');
+      if (data) {
+        originalSetItem('udaan_general_info', JSON.stringify(data));
+        bindGeneralInfo(data);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch general info from database.", e);
+    }
+  }
+
+  function bindGeneralInfo(info) {
     document.getElementById('heroText1').textContent = info.heroTitle1;
     document.getElementById('heroText2').textContent = info.heroTitle2;
     document.getElementById('heroSubtitleText').textContent = info.heroSubtitle;
@@ -421,7 +521,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('contactPhoneText').innerHTML = info.phone;
     document.getElementById('contactEmailText').innerHTML = `${info.email}<br>info@udaanacademymys.com`;
 
-    // Bind Hero Background Image if uploaded
     if (info.heroBgImage) {
       document.documentElement.style.setProperty('--body-bg-image', `url('${info.heroBgImage}')`);
     } else {
@@ -440,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const currentInfo = JSON.parse(localStorage.getItem('udaan_general_info') || '{}');
       
-      const saveGeneralInfo = (bgImageBase64) => {
+      const saveGeneralInfo = async (bgImageBase64) => {
         const info = {
           heroTitle1: document.getElementById('adminHeroTitle1').value,
           heroTitle2: document.getElementById('adminHeroTitle2').value,
@@ -451,11 +550,15 @@ document.addEventListener('DOMContentLoaded', () => {
           heroBgImage: bgImageBase64 !== undefined ? bgImageBase64 : (currentInfo.heroBgImage || '')
         };
         
-        localStorage.setItem('udaan_general_info', JSON.stringify(info));
-        loadGeneralInfo();
-        closeAdminModal();
-        fileInput.value = ''; // reset file input
-        showToast('General configurations saved!', 'success');
+        showToast('Saving general details to database...', 'info');
+        const success = await dbSave('udaan_general_info', info);
+        if (success) {
+          localStorage.setItem('udaan_general_info', JSON.stringify(info));
+          bindGeneralInfo(info);
+          closeAdminModal();
+          fileInput.value = ''; // reset file input
+          showToast('General configurations saved!', 'success');
+        }
       };
       
       if (file) {
@@ -473,12 +576,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Load and Render Teachers List (LinkedIn Style Card)
-  function loadAndRenderTeachers() {
+  // Render Teachers List from LocalStorage (LinkedIn Style Card)
+  function renderTeachersUI() {
     let teachers = localStorage.getItem('udaan_teachers');
     if (!teachers) {
       teachers = defaultTeachers;
-      localStorage.setItem('udaan_teachers', JSON.stringify(teachers));
+      originalSetItem('udaan_teachers', JSON.stringify(teachers));
     } else {
       teachers = JSON.parse(teachers);
     }
@@ -548,6 +651,20 @@ document.addEventListener('DOMContentLoaded', () => {
           adminTeachersList.appendChild(item);
         });
       }
+    }
+  }
+
+  // Load and Render Teachers List (with Database Sync)
+  async function loadAndRenderTeachers() {
+    renderTeachersUI();
+    try {
+      const data = await dbLoad('udaan_teachers');
+      if (data) {
+        originalSetItem('udaan_teachers', JSON.stringify(data));
+        renderTeachersUI();
+      }
+    } catch (e) {
+      console.warn("Failed to load teachers from database.", e);
     }
   }
 
@@ -828,12 +945,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Load and Render Toppers
-  window.loadAndRenderToppers = function() {
+  // Render Toppers from LocalStorage
+  window.renderToppersUI = function() {
     let toppers = localStorage.getItem('udaan_toppers');
     if (!toppers) {
       toppers = defaultToppers;
-      localStorage.setItem('udaan_toppers', JSON.stringify(toppers));
+      originalSetItem('udaan_toppers', JSON.stringify(toppers));
     } else {
       toppers = JSON.parse(toppers);
     }
@@ -881,6 +998,20 @@ document.addEventListener('DOMContentLoaded', () => {
           adminToppersList.appendChild(item);
         });
       }
+    }
+  };
+
+  // Load and Render Toppers List (with Database Sync)
+  window.loadAndRenderToppers = async function() {
+    window.renderToppersUI();
+    try {
+      const data = await dbLoad('udaan_toppers');
+      if (data) {
+        originalSetItem('udaan_toppers', JSON.stringify(data));
+        window.renderToppersUI();
+      }
+    } catch (e) {
+      console.warn("Failed to load toppers from database.", e);
     }
   };
 
@@ -1029,12 +1160,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Load and Render Gallery
-  window.loadAndRenderGallery = function() {
+  // Render Gallery from LocalStorage
+  window.renderGalleryUI = function() {
     let gallery = localStorage.getItem('udaan_gallery');
     if (!gallery) {
       gallery = defaultGallery;
-      localStorage.setItem('udaan_gallery', JSON.stringify(gallery));
+      originalSetItem('udaan_gallery', JSON.stringify(gallery));
     } else {
       gallery = JSON.parse(gallery);
     }
@@ -1083,6 +1214,20 @@ document.addEventListener('DOMContentLoaded', () => {
           adminGalleryList.appendChild(row);
         });
       }
+    }
+  };
+
+  // Load and Render Gallery (with Database Sync)
+  window.loadAndRenderGallery = async function() {
+    window.renderGalleryUI();
+    try {
+      const data = await dbLoad('udaan_gallery');
+      if (data) {
+        originalSetItem('udaan_gallery', JSON.stringify(data));
+        window.renderGalleryUI();
+      }
+    } catch (e) {
+      console.warn("Failed to load gallery from database.", e);
     }
   };
 
@@ -1237,12 +1382,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Load and Render Blog Posts
-  window.loadAndRenderBlog = function() {
+  // Render Blog Posts from LocalStorage
+  window.renderBlogUI = function() {
     let posts = localStorage.getItem('udaan_blog_posts');
     if (!posts) {
       posts = defaultBlogPosts;
-      localStorage.setItem('udaan_blog_posts', JSON.stringify(posts));
+      originalSetItem('udaan_blog_posts', JSON.stringify(posts));
     } else {
       posts = JSON.parse(posts);
     }
@@ -1293,6 +1438,20 @@ document.addEventListener('DOMContentLoaded', () => {
           adminBlogList.appendChild(row);
         });
       }
+    }
+  };
+
+  // Load and Render Blog (with Database Sync)
+  window.loadAndRenderBlog = async function() {
+    window.renderBlogUI();
+    try {
+      const data = await dbLoad('udaan_blog_posts');
+      if (data) {
+        originalSetItem('udaan_blog_posts', JSON.stringify(data));
+        window.renderBlogUI();
+      }
+    } catch (e) {
+      console.warn("Failed to load blog posts from database.", e);
     }
   };
 
@@ -1493,8 +1652,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save to localStorage
     const queries = JSON.parse(localStorage.getItem('udaan_queries') || '[]');
     queries.unshift(query);
-    localStorage.setItem('udaan_queries', JSON.stringify(queries));
+    originalSetItem('udaan_queries', JSON.stringify(queries));
     
+    // Submit to database
+    fetch('/api/submit-query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    }).catch(err => console.warn('Failed to sync query to database', err));
+
     // Trigger mail client
     const currentInfo = JSON.parse(localStorage.getItem('udaan_general_info') || '{}');
     const academyEmail = currentInfo.email || 'admissions@udaanacademymys.com';
@@ -1546,8 +1712,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // Save to localStorage
       const queries = JSON.parse(localStorage.getItem('udaan_queries') || '[]');
       queries.unshift(query);
-      localStorage.setItem('udaan_queries', JSON.stringify(queries));
+      originalSetItem('udaan_queries', JSON.stringify(queries));
       
+      // Submit to database
+      fetch('/api/submit-query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      }).catch(err => console.warn('Failed to sync query to database', err));
+
       // Trigger mail client
       const currentInfo = JSON.parse(localStorage.getItem('udaan_general_info') || '{}');
       const academyEmail = currentInfo.email || 'admissions@udaanacademymys.com';
@@ -1573,7 +1746,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================
      9. Queries Rendering & Controls
      ========================================== */
-  window.renderQueries = function() {
+  // Render Queries from LocalStorage
+  window.renderQueriesUI = function() {
     const list = document.getElementById('adminQueriesList');
     if (!list) return;
     
@@ -1601,6 +1775,20 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       list.appendChild(card);
     });
+  };
+
+  // Load and Render Queries (with Database Sync)
+  window.renderQueries = async function() {
+    window.renderQueriesUI();
+    try {
+      const data = await dbLoad('udaan_queries');
+      if (data) {
+        originalSetItem('udaan_queries', JSON.stringify(data));
+        window.renderQueriesUI();
+      }
+    } catch (e) {
+      console.warn("Failed to load queries from database.", e);
+    }
   };
 
   const clearQueriesBtn = document.getElementById('clearQueriesBtn');
