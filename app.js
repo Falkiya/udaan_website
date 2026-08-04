@@ -239,6 +239,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Toggle Admin Password Visibility
+  const toggleAdminPasswordBtn = document.getElementById('toggleAdminPasswordBtn');
+  const adminAuthPasswordInput = document.getElementById('adminAuthPassword');
+  if (toggleAdminPasswordBtn && adminAuthPasswordInput) {
+    toggleAdminPasswordBtn.addEventListener('click', () => {
+      const isPassword = adminAuthPasswordInput.type === 'password';
+      adminAuthPasswordInput.type = isPassword ? 'text' : 'password';
+      
+      const icon = toggleAdminPasswordBtn.querySelector('i');
+      if (icon) {
+        icon.className = isPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+      }
+    });
+  }
+
   // Admin Login Submission
   const adminLoginForm = document.getElementById('adminLoginForm');
   if (adminLoginForm) {

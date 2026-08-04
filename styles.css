@@ -1736,6 +1736,39 @@ body::before {
   letter-spacing: 0.5px;
 }
 
+/* Password Visibility Toggle Styles */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 46px !important; /* make room for the eye button */
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-grey);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: var(--transition-fast);
+  z-index: 10;
+}
+
+.password-toggle-btn:hover {
+  color: var(--primary-orange);
+}
+
 /* Admin Teachers Management List */
 .admin-teachers-list {
   display: flex;
