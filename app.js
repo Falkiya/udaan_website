@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fetch('/api/load?key=udaan_admin_password', {
         headers: { 'x-admin-password': enteredPassword }
       })
-      .then(response => {
+      .then(async response => {
         if (response.ok) {
           localStorage.setItem('udaan_admin_password', enteredPassword);
           
@@ -301,7 +301,12 @@ document.addEventListener('DOMContentLoaded', () => {
           showToast('Incorrect password! Please try again.', 'error');
           document.getElementById('adminAuthPassword').value = '';
         } else {
-          showToast('Database error: Unable to authenticate.', 'error');
+          let errMsg = 'Unable to authenticate.';
+          try {
+            const errData = await response.json();
+            if (errData && errData.error) errMsg = errData.error;
+          } catch(e) {}
+          showToast(`Database error: ${errMsg}`, 'error');
         }
       })
       .catch(err => {

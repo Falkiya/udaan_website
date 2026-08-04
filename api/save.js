@@ -1,23 +1,23 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { key, data } = req.body;
-  if (!key || data === undefined) {
-    return res.status(400).json({ error: 'Missing key or data' });
-  }
-
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
-
-  if (!url || !token) {
-    return res.status(500).json({ error: 'KV database is not configured or linked in Vercel settings.' });
-  }
-
-  const providedPassword = req.headers['x-admin-password'] || 'admin123';
-
   try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { key, data } = req.body;
+    if (!key || data === undefined) {
+      return res.status(400).json({ error: 'Missing key or data' });
+    }
+
+    const url = process.env.KV_REST_API_URL;
+    const token = process.env.KV_REST_API_TOKEN;
+
+    if (!url || !token) {
+      return res.status(500).json({ error: 'KV database is not configured or linked in Vercel settings.' });
+    }
+
+    const providedPassword = req.headers['x-admin-password'] || 'admin123';
+
     // 1. Fetch current password from DB
     const pwResponse = await fetch(`${url}/`, {
       headers: { Authorization: `Bearer ${token}` },
