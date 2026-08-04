@@ -301,10 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
           showToast('Incorrect password! Please try again.', 'error');
           document.getElementById('adminAuthPassword').value = '';
         } else {
-          let errMsg = 'Unable to authenticate.';
+          let errMsg = `[Status ${response.status}] Unable to authenticate.`;
           try {
             const errData = await response.json();
-            if (errData && errData.error) errMsg = errData.error;
+            if (errData && errData.error) errMsg = `[Status ${response.status}] ${errData.error}`;
           } catch(e) {}
           showToast(`Database error: ${errMsg}`, 'error');
         }
