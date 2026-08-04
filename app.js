@@ -254,6 +254,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Admin Forgot Password Handler
+  const adminForgotPasswordLink = document.getElementById('adminForgotPasswordLink');
+  if (adminForgotPasswordLink) {
+    adminForgotPasswordLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const confirmReset = confirm(
+        "To reset the admin password, this will open your email client to send a secure reset request to the official Academy Email (admissions@udaanacademymys.com).\n\nDo you want to proceed?"
+      );
+      
+      if (confirmReset) {
+        const subject = encodeURIComponent("Udaan Academy Website: Admin Password Reset Request");
+        const body = encodeURIComponent(
+          "Dear Academy Support,\n\nI have forgotten the administrator password for the Udaan Academy website.\n\nPlease assist in resetting or retrieving the database credentials.\n\nWebsite: https://udaanacademymys.com/\nSent from Admin Login Interface."
+        );
+        window.location.href = `mailto:admissions@udaanacademymys.com?subject=${subject}&body=${body}`;
+      }
+    });
+  }
+
   // Admin Login Submission
   const adminLoginForm = document.getElementById('adminLoginForm');
   if (adminLoginForm) {

@@ -1769,6 +1769,25 @@ body::before {
   color: var(--primary-orange);
 }
 
+.forgot-password-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.forgot-password-link {
+  font-size: 13px;
+  color: var(--text-grey);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.forgot-password-link:hover {
+  color: var(--primary-orange);
+  text-decoration: underline;
+}
+
 /* Admin Teachers Management List */
 .admin-teachers-list {
   display: flex;
