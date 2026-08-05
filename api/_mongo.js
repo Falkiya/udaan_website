@@ -1,9 +1,10 @@
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI;
+// Support multiple common environment variable names for MongoDB
+const uri = process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGODB_CONNECTION_STRING || process.env.STORAGE_URI;
 
 if (!uri) {
-  throw new Error('Please add your MONGODB_URI to Vercel environment variables');
+  throw new Error('Please add your MongoDB connection string (MONGODB_URI) to Vercel environment variables');
 }
 
 let client;
@@ -23,7 +24,5 @@ if (process.env.NODE_ENV === 'development') {
 export default clientPromise;
 export async function getDb() {
   const connection = await clientPromise;
-  // This automatically connects to the database specified in the URI connection string
-  // (usually "test" or "udaan" if appended, otherwise defaults to database name)
   return connection.db();
 }
