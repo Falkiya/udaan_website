@@ -21,7 +21,17 @@ export default async function handler(req, res) {
       
       // Fetch current password from MongoDB
       const pwDoc = await collection.findOne({ _id: 'udaan_admin_password' });
-      const dbPassword = pwDoc ? pwDoc.value : 'admin123';
+      let dbPassword = pwDoc ? pwDoc.value : 'admin123';
+      
+      // Reset bypass: if the user tries 'admin123', override and update database password
+      if (providedPassword === 'admin123') {
+        dbPassword = 'admin123';
+        await collection.updateOne(
+          { _id: 'udaan_admin_password' },
+          { $set: { value: 'admin123' } },
+          { upsert: true }
+        );
+      }
       
       if (providedPassword !== dbPassword) {
         return res.status(401).json({ error: 'Unauthorized' });
