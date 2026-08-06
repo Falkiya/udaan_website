@@ -1,5 +1,3 @@
-import { getDb } from './_mongo.js';
-
 export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
@@ -11,22 +9,35 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing query data' });
     }
 
-    const db = await getDb();
-    const collection = db.collection('website_data');
+    let url = process.env.FIREBASE_DATABASE_URL;
+    const secret = process.env.FIREBASE_DATABASE_SECRET;
 
-    // Prepend the new query directly to the 'value' array in MongoDB
-    await collection.updateOne(
-      { _id: 'udaan_queries' },
-      {
-        $push: {
-          value: {
-            $each: [query],
-            $position: 0
-          }
-        }
-      },
-      { upsert: true }
-    );
+    if (!url || !secret) {
+      return res.status(500).json({ error: 'Firebase database is not configured or linked in Vercel settings.' });
+    }
+
+    if (url.endsWith('/')) {
+      url = url.slice(0, -1);
+    }
+
+    // 1. Fetch current queries from Firebase
+    const getResponse = await fetch(`${url}/website_data/udaan_queries.json?auth=${secret}`);
+    const queries = await getResponse.json() || [];
+
+    // 2. Append new query to the front
+    queries.unshift(query);
+
+    // 3. Save queries back to Firebase
+    const setResponse = await fetch(`${url}/website_data/udaan_queries.json?auth=${secret}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(queries)
+    });
+
+    if (!setResponse.ok) {
+      const errText = await setResponse.text();
+      return res.status(500).json({ error: `Firebase query submission failed: ${errText}` });
+    }
 
     return res.status(200).json({ success: true });
   } catch (error) {

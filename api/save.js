@@ -1,5 +1,3 @@
-import { getDb } from './_mongo.js';
-
 export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
@@ -11,26 +9,40 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing key or data' });
     }
 
-    const db = await getDb();
-    const collection = db.collection('website_data');
+    let url = process.env.FIREBASE_DATABASE_URL;
+    const secret = process.env.FIREBASE_DATABASE_SECRET;
+
+    if (!url || !secret) {
+      return res.status(500).json({ error: 'Firebase database is not configured or linked in Vercel settings.' });
+    }
+
+    if (url.endsWith('/')) {
+      url = url.slice(0, -1);
+    }
 
     const providedPassword = req.headers['x-admin-password'] || 'admin123';
 
-    // 1. Fetch current password from MongoDB
-    const pwDoc = await collection.findOne({ _id: 'udaan_admin_password' });
-    let dbPassword = pwDoc ? pwDoc.value : 'admin123';
+    // 1. Fetch current password from Firebase
+    const pwResponse = await fetch(`${url}/website_data/udaan_admin_password.json?auth=${secret}`);
+    let dbPassword = await pwResponse.json();
+    if (dbPassword === null) dbPassword = 'admin123';
 
     // 2. Validate password (bypass allowed for 'admin123')
     if (providedPassword !== dbPassword && providedPassword !== 'admin123') {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // 3. Upsert key/value in MongoDB
-    await collection.updateOne(
-      { _id: key },
-      { $set: { value: data } },
-      { upsert: true }
-    );
+    // 3. Write key/value to Firebase
+    const response = await fetch(`${url}/website_data/${key}.json?auth=${secret}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      return res.status(500).json({ error: `Firebase save failed: ${errText}` });
+    }
 
     return res.status(200).json({ success: true });
   } catch (error) {
