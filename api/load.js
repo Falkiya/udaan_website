@@ -9,8 +9,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing key parameter' });
     }
 
-    let url = process.env.FIREBASE_DATABASE_URL;
-    const secret = process.env.FIREBASE_DATABASE_SECRET;
+    let url = process.env.FIREBASE_DATABASE_URL || process.env.FIREBASE_DB_URL || process.env.FIREBASE_URL;
+    const secret = process.env.FIREBASE_DATABASE_SECRET || process.env.FIREBASE_SECRET || process.env.FIREBASE_DB_SECRET;
 
     if (!url || !secret) {
       return res.status(500).json({ error: 'Firebase database is not configured or linked in Vercel settings.' });
