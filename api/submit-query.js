@@ -30,9 +30,21 @@ export default async function handler(req, res) {
       url = url.slice(0, -1);
     }
 
-    // 1. Fetch current queries from Firebase
+    // 1. Fetch current queries from Firebase safely
     const getResponse = await fetch(`${url}/website_data/udaan_queries.json?auth=${secret}`);
-    const queries = await getResponse.json() || [];
+    const rawText = await getResponse.text();
+    let queries = [];
+    try {
+      if (rawText && rawText.trim() !== 'null') {
+        queries = JSON.parse(rawText);
+      }
+    } catch (e) {
+      queries = [];
+    }
+
+    if (!Array.isArray(queries)) {
+      queries = [];
+    }
 
     // 2. Append new query to the front
     queries.unshift(query);

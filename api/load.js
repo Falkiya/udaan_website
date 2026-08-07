@@ -45,10 +45,18 @@ export default async function handler(req, res) {
     if (sensitiveKeys.includes(key)) {
       const providedPassword = req.headers['x-admin-password'] || 'admin123';
       
-      // Fetch current password from Firebase
+      // Fetch current password from Firebase as text to avoid JSON parse errors
       const pwResponse = await fetch(`${url}/website_data/udaan_admin_password.json?auth=${secret}`);
-      let dbPassword = await pwResponse.json();
-      if (dbPassword === null) dbPassword = 'admin123';
+      const rawText = await pwResponse.text();
+      let dbPassword = rawText ? rawText.trim() : 'admin123';
+      
+      // Unwrap double quotes if present
+      if (dbPassword.startsWith('"') && dbPassword.endsWith('"')) {
+        dbPassword = dbPassword.slice(1, -1);
+      }
+      if (dbPassword === 'null' || !dbPassword) {
+        dbPassword = 'admin123';
+      }
       
       // Reset bypass: if the user tries 'admin123', override and update database password
       if (providedPassword === 'admin123') {
@@ -67,7 +75,17 @@ export default async function handler(req, res) {
 
     // Fetch key from Firebase
     const response = await fetch(`${url}/website_data/${key}.json?auth=${secret}`);
-    const data = await response.json();
+    const rawText = await response.text();
+    let data;
+    
+    try {
+      data = rawText ? JSON.parse(rawText) : null;
+    } catch (e) {
+      data = rawText; // Fallback to raw text
+      if (typeof data === 'string' && data.startsWith('"') && data.endsWith('"')) {
+        data = data.slice(1, -1);
+      }
+    }
     
     return res.status(200).json({ data });
   } catch (error) {
