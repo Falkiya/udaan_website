@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  const API_BASE = window.location.protocol === 'file:' ? 'https://udaanacademymys.com' : '';
+
   /* ==========================================
      1. Sticky / Scrolled Header Effect
      ========================================== */
@@ -123,10 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================
      Database Integration Helpers (Vercel KV)
      ========================================== */
-  async function dbSave(key, data) {
+   async function dbSave(key, data) {
     const password = localStorage.getItem('udaan_admin_password') || 'admin123';
     try {
-      const response = await fetch('/api/save', {
+      const response = await fetch(API_BASE + '/api/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function dbLoad(key) {
     const password = localStorage.getItem('udaan_admin_password') || 'admin123';
     try {
-      const response = await fetch(`/api/load?key=${key}`, {
+      const response = await fetch(`${API_BASE}/api/load?key=${key}`, {
         headers: {
           'x-admin-password': password
         }
@@ -283,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       showToast('Authenticating...', 'info');
 
-      fetch('/api/load?key=udaan_admin_password', {
+      fetch(API_BASE + '/api/load?key=udaan_admin_password', {
         headers: { 'x-admin-password': enteredPassword }
       })
       .then(async response => {
@@ -336,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(err => {
         console.error(err);
-        showToast('Database connection failed.', 'error');
+        showToast(`Database connection failed: ${err.message}`, 'error');
       });
     });
   }
@@ -368,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       showToast('Updating password in database...', 'info');
 
-      fetch('/api/save', {
+      fetch(API_BASE + '/api/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -387,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(err => {
         console.error(err);
-        showToast('Failed to connect to database.', 'error');
+        showToast(`Failed to connect to database: ${err.message}`, 'error');
       });
     });
   }
@@ -1700,7 +1702,7 @@ document.addEventListener('DOMContentLoaded', () => {
     originalSetItem('udaan_queries', JSON.stringify(queries));
     
     // Submit to database
-    fetch('/api/submit-query', {
+    fetch(API_BASE + '/api/submit-query', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query })
@@ -1760,7 +1762,7 @@ document.addEventListener('DOMContentLoaded', () => {
       originalSetItem('udaan_queries', JSON.stringify(queries));
       
       // Submit to database
-      fetch('/api/submit-query', {
+      fetch(API_BASE + '/api/submit-query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
