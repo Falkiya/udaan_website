@@ -324,7 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
           let errMsg = `[Status ${response.status}] Unable to authenticate.`;
           try {
             const errData = await response.json();
-            if (errData && errData.error) errMsg = `[Status ${response.status}] ${errData.error}`;
+            if (errData && errData.error) {
+              errMsg = `[Status ${response.status}] ${errData.error}`;
+              if (errData.detectedKeys) {
+                errMsg += ` (Detected keys: ${errData.detectedKeys.join(', ') || 'none'})`;
+              }
+            }
           } catch(e) {}
           showToast(`Database error: ${errMsg}`, 'error');
         }

@@ -15,7 +15,17 @@ export default async function handler(req, res) {
                    process.env.firebase_database_secret || process.env.firebase_secret || process.env.firebase_db_secret;
 
     if (!url || !secret) {
-      return res.status(500).json({ error: 'Firebase database is not configured or linked in Vercel settings.' });
+      const keys = Object.keys(process.env).filter(k => 
+        k.toLowerCase().includes('firebase') || 
+        k.toLowerCase().includes('db') || 
+        k.toLowerCase().includes('url') || 
+        k.toLowerCase().includes('secret') ||
+        k.toLowerCase().includes('uri')
+      );
+      return res.status(500).json({ 
+        error: 'Firebase database is not configured or linked in Vercel settings.',
+        detectedKeys: keys
+      });
     }
 
     if (url.endsWith('/')) {
