@@ -12,7 +12,15 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { query } = req.body;
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    }
+    const { query } = body || {};
     if (!query) {
       return res.status(400).json({ error: 'Missing query data' });
     }
@@ -22,21 +30,30 @@ export default async function handler(req, res) {
     const secret = process.env.FIREBASE_DATABASE_SECRET || process.env.FIREBASE_SECRET || process.env.FIREBASE_DB_SECRET ||
                    process.env.firebase_database_secret || process.env.firebase_secret || process.env.firebase_db_secret;
 
-    if (!url || !secret) {
-      return res.status(500).json({ error: 'Firebase database is not configured or linked in Vercel settings.' });
+    if (!url) {
+      return res.status(500).json({ error: 'Firebase database URL is not configured in Vercel settings.' });
     }
 
+    url = url.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
     if (url.endsWith('/')) {
       url = url.slice(0, -1);
     }
 
+    const cleanSecret = secret ? secret.trim().replace(/^["']|["']$/g, '') : '';
+    const authParam = cleanSecret ? `?auth=${encodeURIComponent(cleanSecret)}` : '';
+
     // 1. Fetch current queries from Firebase safely
-    const getResponse = await fetch(`${url}/website_data/udaan_queries.json?auth=${secret}`);
-    const rawText = await getResponse.text();
     let queries = [];
     try {
-      if (rawText && rawText.trim() !== 'null') {
-        queries = JSON.parse(rawText);
+      const getResponse = await fetch(`${url}/website_data/udaan_queries.json${authParam}`);
+      if (getResponse.ok) {
+        const rawText = await getResponse.text();
+        if (rawText && rawText.trim() && rawText.trim() !== 'null') {
+          queries = JSON.parse(rawText);
+        }
       }
     } catch (e) {
       queries = [];
@@ -50,7 +67,7 @@ export default async function handler(req, res) {
     queries.unshift(query);
 
     // 3. Save queries back to Firebase
-    const setResponse = await fetch(`${url}/website_data/udaan_queries.json?auth=${secret}`, {
+    const setResponse = await fetch(`${url}/website_data/udaan_queries.json${authParam}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(queries)
@@ -58,7 +75,7 @@ export default async function handler(req, res) {
 
     if (!setResponse.ok) {
       const errText = await setResponse.text();
-      return res.status(500).json({ error: `Firebase query submission failed: ${errText}` });
+      return res.status(setResponse.status || 500).json({ error: `Firebase query submission failed: ${errText}` });
     }
 
     return res.status(200).json({ success: true });

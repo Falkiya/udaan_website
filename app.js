@@ -2,7 +2,10 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  const API_BASE = window.location.protocol === 'file:' ? 'https://udaanacademymys.com' : '';
+  const isLocal = window.location.protocol === 'file:' || 
+                  window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1';
+  const API_BASE = isLocal ? 'https://udaanacademymys.com' : '';
 
   /* ==========================================
      1. Sticky / Scrolled Header Effect
@@ -123,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================
-     Database Integration Helpers (Vercel KV)
+     Database Integration Helpers (Firebase / Vercel)
      ========================================== */
    async function dbSave(key, data) {
     const password = localStorage.getItem('udaan_admin_password') || 'admin123';
@@ -137,12 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ key, data })
       });
       if (!response.ok) {
-        throw new Error('Failed to save to database');
+        let errMessage = `HTTP ${response.status}`;
+        try {
+          const resJson = await response.json();
+          if (resJson && resJson.error) errMessage = resJson.error;
+        } catch (e) {}
+        throw new Error(errMessage);
       }
       return true;
     } catch (e) {
-      console.error(e);
-      showToast('Database error: changes could not be saved globally.', 'error');
+      console.error(`Database save error [${key}]:`, e);
+      showToast(`Database error: ${e.message}`, 'error');
       return false;
     }
   }
@@ -156,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       if (!response.ok) {
-        throw new Error('Failed to load from database');
+        throw new Error(`HTTP ${response.status}`);
       }
       const res = await response.json();
       return res.data;
@@ -166,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Intercept localStorage.setItem to automatically sync changes to Vercel KV
+  // Intercept localStorage.setItem to automatically sync changes to Firebase
   const originalSetItem = localStorage.setItem.bind(localStorage);
   localStorage.setItem = function(key, value) {
     originalSetItem(key, value);
@@ -175,7 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (key === 'udaan_queries' && !localStorage.getItem('udaan_admin_password')) {
         return;
       }
-      dbSave(key, JSON.parse(value));
+      let parsedData;
+      try {
+        parsedData = typeof value === 'string' ? JSON.parse(value) : value;
+      } catch (e) {
+        parsedData = value; // Fallback for raw strings like password
+      }
+      dbSave(key, parsedData);
     }
   };
 
@@ -208,9 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Initialize Default Password if missing
+  // Initialize Default Password if missing (using originalSetItem to avoid spurious sync)
   if (!localStorage.getItem('udaan_admin_password')) {
-    localStorage.setItem('udaan_admin_password', 'admin123');
+    originalSetItem('udaan_admin_password', 'admin123');
   }
 
   function openAdminModal() {
@@ -290,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(async response => {
         if (response.ok) {
-          localStorage.setItem('udaan_admin_password', enteredPassword);
+          originalSetItem('udaan_admin_password', enteredPassword);
           
           // Unlock Admin panel
           document.getElementById('adminLoginSection').style.display = 'none';
@@ -378,19 +392,67 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         body: JSON.stringify({ key: 'udaan_admin_password', data: newPwd })
       })
-      .then(response => {
+      .then(async response => {
         if (response.ok) {
-          localStorage.setItem('udaan_admin_password', newPwd);
+          originalSetItem('udaan_admin_password', newPwd);
           showToast('Password updated successfully!', 'success');
           adminPasswordForm.reset();
         } else {
-          showToast('Failed to save new password to database.', 'error');
+          let errText = 'Failed to save new password to database.';
+          try {
+            const errData = await response.json();
+            if (errData && errData.error) errText = errData.error;
+          } catch(e) {}
+          showToast(`Database error: ${errText}`, 'error');
         }
       })
       .catch(err => {
         console.error(err);
         showToast(`Failed to connect to database: ${err.message}`, 'error');
       });
+    });
+  }
+
+  // Admin Sync All Data to Database
+  const adminSyncAllBtn = document.getElementById('adminSyncAllBtn');
+  if (adminSyncAllBtn) {
+    adminSyncAllBtn.addEventListener('click', async () => {
+      const confirmSync = confirm(
+        'This will upload current website content (General settings, Teachers, Toppers, Gallery, and Blog posts) to the Firebase cloud database.\n\nDo you want to proceed?'
+      );
+      if (!confirmSync) return;
+
+      adminSyncAllBtn.disabled = true;
+      adminSyncAllBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>SYNCING TO CLOUD...</span>';
+      showToast('Syncing all data to cloud database...', 'info');
+
+      try {
+        const generalInfo = JSON.parse(localStorage.getItem('udaan_general_info') || JSON.stringify(defaultGeneralInfo));
+        const teachers = JSON.parse(localStorage.getItem('udaan_teachers') || JSON.stringify(defaultTeachers));
+        const toppers = JSON.parse(localStorage.getItem('udaan_toppers') || JSON.stringify(defaultToppers));
+        const gallery = JSON.parse(localStorage.getItem('udaan_gallery') || JSON.stringify(defaultGallery));
+        const blogPosts = JSON.parse(localStorage.getItem('udaan_blog_posts') || JSON.stringify(defaultBlogPosts));
+
+        const results = await Promise.all([
+          dbSave('udaan_general_info', generalInfo),
+          dbSave('udaan_teachers', teachers),
+          dbSave('udaan_toppers', toppers),
+          dbSave('udaan_gallery', gallery),
+          dbSave('udaan_blog_posts', blogPosts)
+        ]);
+
+        if (results.every(r => r === true)) {
+          showToast('All website content synced to Firebase successfully!', 'success');
+        } else {
+          showToast('Some items could not be saved to cloud database.', 'error');
+        }
+      } catch (err) {
+        console.error('Error during full sync:', err);
+        showToast(`Sync failed: ${err.message}`, 'error');
+      } finally {
+        adminSyncAllBtn.disabled = false;
+        adminSyncAllBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> <span>SYNC ALL DATA TO CLOUD DATABASE</span>';
+      }
     });
   }
 
@@ -600,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Saving general details to database...', 'info');
         const success = await dbSave('udaan_general_info', info);
         if (success) {
-          localStorage.setItem('udaan_general_info', JSON.stringify(info));
+          originalSetItem('udaan_general_info', JSON.stringify(info));
           bindGeneralInfo(info);
           closeAdminModal();
           fileInput.value = ''; // reset file input

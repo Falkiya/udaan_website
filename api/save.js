@@ -12,9 +12,17 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { key, data } = req.body;
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    }
+    const { key, data } = body || {};
     if (!key || data === undefined) {
-      return res.status(400).json({ error: 'Missing key or data' });
+      return res.status(400).json({ error: 'Missing key or data parameter' });
     }
 
     let url = process.env.FIREBASE_DATABASE_URL || process.env.FIREBASE_DB_URL || process.env.FIREBASE_URL ||
@@ -22,36 +30,47 @@ export default async function handler(req, res) {
     const secret = process.env.FIREBASE_DATABASE_SECRET || process.env.FIREBASE_SECRET || process.env.FIREBASE_DB_SECRET ||
                    process.env.firebase_database_secret || process.env.firebase_secret || process.env.firebase_db_secret;
 
-    if (!url || !secret) {
-      return res.status(500).json({ error: 'Firebase database is not configured or linked in Vercel settings.' });
+    if (!url) {
+      return res.status(500).json({ error: 'Firebase database URL is not configured in Vercel settings.' });
     }
 
+    url = url.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
     if (url.endsWith('/')) {
       url = url.slice(0, -1);
     }
 
+    const cleanSecret = secret ? secret.trim().replace(/^["']|["']$/g, '') : '';
+    const authParam = cleanSecret ? `?auth=${encodeURIComponent(cleanSecret)}` : '';
+
     const providedPassword = req.headers['x-admin-password'] || 'admin123';
 
     // 1. Fetch current password from Firebase as text to prevent JSON parse errors
-    const pwResponse = await fetch(`${url}/website_data/udaan_admin_password.json?auth=${secret}`);
-    const rawText = await pwResponse.text();
-    let dbPassword = rawText ? rawText.trim() : 'admin123';
-
-    // Unwrap double quotes if present
-    if (dbPassword.startsWith('"') && dbPassword.endsWith('"')) {
-      dbPassword = dbPassword.slice(1, -1);
-    }
-    if (dbPassword === 'null' || !dbPassword) {
-      dbPassword = 'admin123';
+    let dbPassword = 'admin123';
+    try {
+      const pwResponse = await fetch(`${url}/website_data/udaan_admin_password.json${authParam}`);
+      if (pwResponse.ok) {
+        const rawText = await pwResponse.text();
+        if (rawText && rawText.trim() && rawText.trim() !== 'null') {
+          dbPassword = rawText.trim();
+          if (dbPassword.startsWith('"') && dbPassword.endsWith('"')) {
+            dbPassword = dbPassword.slice(1, -1);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Could not fetch current admin password from Firebase:', e);
     }
 
     // 2. Validate password (bypass allowed for 'admin123')
     if (providedPassword !== dbPassword && providedPassword !== 'admin123') {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized: Invalid admin credentials' });
     }
 
     // 3. Write key/value to Firebase
-    const response = await fetch(`${url}/website_data/${key}.json?auth=${secret}`, {
+    const response = await fetch(`${url}/website_data/${key}.json${authParam}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -59,7 +78,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errText = await response.text();
-      return res.status(500).json({ error: `Firebase save failed: ${errText}` });
+      return res.status(response.status || 500).json({ error: `Firebase save failed: ${errText}` });
     }
 
     return res.status(200).json({ success: true });
